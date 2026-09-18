@@ -1,0 +1,594 @@
+@import "./tokens.css";
+
+/* ══ base ═════════════════════════════════════════════════════════════ */
+*{box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--ground);color:var(--ink);
+ font-family:var(--font-sans)}
+img{display:block;width:100%;height:auto;background:var(--img-rest)}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--focus-ring);outline-offset:3px}
+hr.rule{border:0;border-top:1px solid var(--rule);margin:0}
+
+/* ══ type ═════════════════════════════════════════════════════════════ */
+.t-micro{font-size:var(--t-micro-size);line-height:var(--t-micro-lh);
+ letter-spacing:var(--t-micro-track);font-weight:var(--t-micro-weight);text-transform:uppercase}
+.t-small{font-size:var(--t-small-size);line-height:var(--t-small-lh);
+ letter-spacing:var(--t-small-track);font-weight:var(--t-small-weight);text-transform:uppercase}
+.lower{text-transform:none;letter-spacing:.02em}
+.t-wordmark{font-size:var(--t-wordmark-size);font-weight:var(--t-wordmark-weight);
+ letter-spacing:var(--t-wordmark-track)}
+/* logo as a mask filled with currentColor — one file, correct on any ground */
+.logo{display:block;height:var(--wordmark-h);
+ width:calc(var(--wordmark-h) * var(--wordmark-ratio));
+ background:currentColor;
+ -webkit-mask:url(../public/images/logo.png) no-repeat center/contain;
+ mask:url(../public/images/logo.png) no-repeat center/contain}
+.logo span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.t-hero{font-size:var(--t-hero-size);line-height:var(--t-hero-lh);
+ letter-spacing:var(--t-hero-track);font-weight:400;text-transform:lowercase;margin:0}
+.t-hero-sub{font-size:var(--t-hero-sub-size);line-height:var(--t-hero-sub-lh);
+ letter-spacing:var(--t-hero-sub-track);font-weight:400;text-transform:lowercase;
+ margin:0;max-width:23ch}   /* 23ch → three lines */
+.t-row{font-size:var(--t-row-size);line-height:var(--t-row-lh);
+ letter-spacing:var(--t-row-track);font-weight:400;text-transform:lowercase;margin:0}
+.t-statement{font-size:var(--t-statement-size);line-height:var(--t-statement-lh);
+ letter-spacing:var(--t-statement-track);font-weight:400;text-transform:lowercase;margin:0}
+.t-close{font-size:var(--t-close-size);line-height:var(--t-close-lh);
+ letter-spacing:var(--t-close-track);font-weight:400;margin:0;max-width:34ch}
+.t-project{font-family:var(--font-serif);font-size:var(--t-project-size);
+ line-height:var(--t-project-lh);letter-spacing:var(--t-project-track);
+ font-weight:400;text-transform:lowercase;margin:0}
+.t-lede{font-family:var(--font-serif);font-size:var(--t-lede-size);
+ line-height:var(--t-lede-lh);max-width:var(--measure)}
+/* an editorial pull-quote: serif italic, a hairline rule standing in for
+   quotation marks the way a magazine sidebar sets one. */
+.t-pullquote{margin:0;padding-left:var(--s-5);border-left:1px solid var(--rule)}
+.t-pullquote p{font-family:var(--font-serif);font-style:italic;
+ font-size:var(--t-lede-size);line-height:1.5;margin:0}
+.t-body{font-family:var(--font-serif);font-size:var(--t-body-size);
+ line-height:var(--t-body-lh);max-width:var(--measure)}
+.muted{color:var(--muted)}
+
+/* row titles at small-text scale — toggled from the preview bar */
+body[data-tiny] .t-row{font-size:var(--t-small-size);line-height:var(--t-small-lh);
+ letter-spacing:var(--t-small-track);text-transform:uppercase;font-weight:500}
+
+/* ══ layout ═══════════════════════════════════════════════════════════ */
+.page{max-width:var(--page-max);margin-inline:auto;padding-inline:var(--page-margin)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gutter)}
+.after-statement{margin-top:var(--s-8)}
+.bleed{width:100vw;margin-left:calc(50% - 50vw)}
+
+/* ══ load sequence (§2.2) ═════════════════════════════════════════════ */
+.loader{position:fixed;inset:0;background:var(--ground);z-index:200;
+ display:grid;place-items:center;overflow:hidden;
+ animation:clearStack var(--stack-clear) var(--ease-land) forwards;
+ animation-delay:calc(6*var(--stack-interval) + var(--stack-land) + var(--stack-hold))}
+.loader img{position:absolute;width:clamp(110px,15vw,230px);aspect-ratio:3/2;object-fit:cover;
+ opacity:0;transform:translate(var(--dx),calc(var(--dy) + var(--stack-shift))) rotate(var(--rot));
+ animation:land var(--stack-land) var(--ease-land) forwards}
+.loader img:nth-child(1){--dx:-44%;--dy:-16%;--rot:-4deg;animation-delay:0ms}
+.loader img:nth-child(2){--dx:24%;--dy:-24%;--rot:3deg;animation-delay:var(--stack-interval)}
+.loader img:nth-child(3){--dx:-16%;--dy:18%;--rot:5deg;animation-delay:calc(2*var(--stack-interval))}
+.loader img:nth-child(4){--dx:42%;--dy:12%;--rot:-3deg;animation-delay:calc(3*var(--stack-interval))}
+.loader img:nth-child(5){--dx:-30%;--dy:-3%;--rot:2deg;animation-delay:calc(4*var(--stack-interval))}
+.loader img:nth-child(6){--dx:5%;--dy:1%;--rot:-1deg;animation-delay:calc(5*var(--stack-interval))}
+@keyframes land{to{opacity:1;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}}
+@keyframes clearStack{to{opacity:0;visibility:hidden}}
+@media (prefers-reduced-motion:reduce){
+ .loader img{position:static;display:none;opacity:1;transform:none}
+ .loader img:nth-child(1){display:block;width:min(46vw,420px)}
+}
+
+/* ══ hero §2.1 — full bleed, image to every corner ════════════════════ */
+/* the hero is a band, not a screen, and its height is whatever two project
+   rows leave over — so the fold always lands on the second row's lower edge
+   rather than cutting through it. Row height is derived from the thumbnail's
+   3:2 ratio at 40% of its column, so it changes with width and cannot be a
+   fixed token; --hero-h is measured in script and 58vh is the fallback.
+   min-height, so the band still grows for the open panel or wrapped copy. */
+.hero{position:relative;min-height:var(--hero-h,58vh);display:flex;flex-direction:column}
+.hero-bg{position:absolute;inset:0;overflow:hidden}
+/* the band shows ~54% of the frame's height. The figures sit low — the right
+   head begins 46.5% down the frame, the middle one 62% — so any window higher
+   than this spends its top on bare wall above their heads. Anchored to the
+   bottom, the right head sits ~7px under the top edge and the bodies run to
+   the band's floor: no bright dead space, nothing clipped. */
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:50% 100%}
+.hero-bg::after{content:'';position:absolute;inset:0;
+ background:linear-gradient(to top,rgba(23,23,21,.82) 0%,rgba(23,23,21,.30) 42%,
+ rgba(23,23,21,.18) 70%,rgba(23,23,21,.55) 100%)}
+.hero-in{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;
+ padding:var(--s-6) var(--page-margin) var(--s-6);color:var(--on-image)}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s-6)}
+.hero-top a[aria-expanded]{text-decoration:underline;text-underline-offset:.3em;
+ text-decoration-thickness:1px}
+/* the reveal toggle reads gold against the pale/warm hero at every width —
+   the previous insertion accidentally landed inside the mobile-only media
+   query and never applied on desktop. */
+.rev-cta{color:var(--on-image)}   /* white, same as the project titles over a
+  photo (e.g. "personal brand") — the gold accent read too low-contrast against
+  the hero in practice, per Laura */
+.spacer{flex:1;min-height:var(--s-8)}
+/* The panel needs its own ground. Measured against the frame behind it, the
+   minimum luminance under columns 2-4 is 32/31/15 against ink at 26 — roughly
+   1:1, so the type simply disappeared over the figures. A bone wash at .62
+   lifts the worst case to ~153, about 6:1, and reads as a tint block laid over
+   the photograph rather than a box. It exists only while the panel is open, so
+   the closed hero keeps its ink-straight-on-image character. */
+.reveal{position:relative;overflow:hidden;height:0;margin-top:var(--s-6);
+  transition:height 420ms var(--ease-land)}
+.reveal::before{content:'';position:absolute;inset:0;
+  background:rgba(240,238,236,.92);opacity:0;pointer-events:none;
+  transition:opacity 420ms var(--ease-land)}
+.reveal[data-open]::before{opacity:1}
+.reveal-inner{position:relative}
+.reveal-inner{padding:var(--rev-pad)}
+/* Set as newsprint: one continuous flow broken into columns at a narrow
+   measure, across the full page width. A single 62ch column left most of a wide
+   screen empty, which read as a weblog rather than an editorial page. The
+   portrait sits inside the flow at one column's width, the way a magazine cuts
+   a picture into a text block. */
+/* A spread, not a weblog: the portrait is a column of its own on the left and
+   the whole text runs as newsprint columns beside it, so the block fills the
+   page width and reads at a newspaper measure instead of one narrow ribbon
+   stranded on a wide screen. The picture sets the block's height and the
+   columns balance to it, which is what makes it sit as one rectangle. */
+/* Laid out on a three-column editorial grid: the picture takes the first two
+   columns at the top, 'the practice' runs beneath it across those same two in
+   two columns, and 'laura' holds the third column full height. Two labelled
+   sections rather than one continuous article, so splitting the flow this way
+   keeps the reading order honest.
+   The portrait is 2:3; across two columns at its own ratio it would stand
+   ~1850px tall, so it is cropped to a wide block and focused on her face. */
+.rev-spread{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  column-gap:var(--s-6);row-gap:var(--s-5);align-items:start;
+  max-width:56rem;margin-inline:auto}
+/* narrower columns read better than the full page width did — capping the
+   spread and centring it inside the paper block is what makes each of the
+   three columns (portrait aside) sit at a comfortable measure. */
+.rev-portrait{grid-column:1/3;grid-row:1;margin:0;width:100%;
+  aspect-ratio:5/2;overflow:hidden}
+/* the ratio has to live on the figure: with height:100% on the image, the
+   image's own 933x1400 intrinsic ratio wins and the block stands 1857px tall. */
+.rev-portrait img{width:100%;height:100%;object-fit:cover;
+  object-position:50% 41%;display:block}
+.rev-cols{display:contents}
+.rev-practice{grid-column:1/3;grid-row:2;columns:2;column-gap:var(--s-6)}
+/* set as newsprint: justified with hyphenation, so every column has the
+   same two vertical edges instead of a ragged one. */
+.rev-practice,.rev-laura{text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+.rev-label{text-align:left;hyphens:none}
+.rev-laura{grid-column:3;grid-row:1 / span 2;height:100%;
+  display:flex;flex-direction:column;justify-content:center}
+/* the laura column spans both rows so it matches the image+practice height,
+   but its own copy is shorter than that combined height — left top-aligned
+   it stranded a block of empty air below the last line. Centering it splits
+   that leftover space evenly above and below instead. */
+.rev-label{break-after:avoid}
+.rev-laura-body{display:block}
+.rev-laura-text{display:block}
+.rev-laura-text > .t-body:last-child{margin-bottom:0}
+/* the hero's flexible spacer exists to push the headline to the bottom of an
+   empty screen. With the panel open there is nothing to push, so it gives its
+   height back instead of adding to the scroll. */
+.reveal[data-open] ~ .spacer{flex:0 0 0;min-height:0}
+.rev-label{margin:0 0 var(--s-3)}
+/* the reveal's height animates from a measured scrollHeight, so every child
+   must contribute a real height — hence explicit paragraph margins and an
+   intrinsically sized portrait rather than a lazy one. */
+/* the reveal is read in one sitting inside the hero, so it runs a step down
+   from body copy and on tighter leading — the whole panel has to fit a screen. */
+.reveal-inner .t-body{font-size:0.9375rem;line-height:1.5;margin:0 0 var(--s-3)}
+.reveal-inner .t-body:last-child{margin-bottom:0}
+
+#pText p{margin:0 0 var(--s-4)}
+#pText p:last-child{margin-bottom:0}
+/* the opening statement runs the full page width as newsprint — the same
+   device as the reveal panel — rather than one column stranded at half the
+   page. column-width lets 2 columns form on a narrower desktop and 3 on a
+   wide one, without a breakpoint to maintain. */
+.p-text-cols{column-width:26rem;column-gap:var(--s-7);max-width:none;
+  text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+/* CSS multi-column only splits into multiple columns once there's enough
+   content to need it. A single short statement resolves to ONE column, and
+   that one column then stretches to the full container width instead of
+   sitting at the 26rem measure — which is what let "to them now." strand
+   itself alone on a very long, nearly-full-width second line. Capping the
+   lone paragraph's own width keeps a one-sentence statement in a proper
+   left-hand column; multi-paragraph statements are unaffected. */
+/* the max-width cap alone did not stick — in a CSS-columns context with only
+   enough content for one column, that single column box still spans the full
+   container, and the paragraph inside stretches to fill it regardless of its
+   own max-width. Turning columns off entirely for the lone-paragraph case
+   (:has support is fine in Chromium) is what actually keeps it narrow. */
+.p-text-cols:has(> p:only-child){column-width:auto;columns:1}
+.p-text-cols > p:only-child{max-width:26rem}
+/* .t-body carries a 62ch reading-measure cap for single-column prose — the
+   right cap for one column, but it was also capping this full-width block
+   at 647px before the multi-column rule ever got a chance to run. */
+/* sits on the baseline of 'practice', continuing the phrase at small size */
+.byline{font-size:var(--t-hero-sub-size);letter-spacing:var(--t-hero-sub-track);
+ line-height:1;margin-left:clamp(.5rem,.9vw,1.1rem);white-space:nowrap}
+/* §3.1 sets the project title in serif on purpose (different register from
+   home). Toggle to sans if it should match 'a creative practice' instead. */
+body[data-titlesans] .t-project{font-family:var(--font-sans);letter-spacing:-0.03em}
+body[data-subtop] .hero-low{align-items:start}
+/* hero-low and hero-bottom share one 12-col grid so the supporting
+   sentence and the [ projects ] group start on the same vertical line */
+.hero-low{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gutter);
+ align-items:end;padding-bottom:var(--s-6)}
+.hero-low > div{grid-column:1/10}
+.hero-low > .t-hero-sub{grid-column:10/13;text-align:right}
+/* optical alignment: at 112px the headline's side bearing puts its first
+   letterform ~4px inside its box, while the 16px logo's is ~1px — so the box
+   edges matched while the letters visibly did not. Both are pulled back by
+   their own bearing, in em, so it holds at every size. */
+.t-hero{margin-left:-0.035em}
+.logo span{margin-left:-0.06em;display:inline-block}
+.hero-rule{border:0;border-top:1px solid rgba(232,232,228,.28);margin:0}
+.hero-bottom{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gutter);
+ align-items:center;padding-top:var(--s-5)}
+.hero-bottom > .group:first-child{grid-column:1/10}
+/* the right group spans column 10 → the content's right edge, so [ projects ]
+   keeps the column-10 line and [ working together ] finishes flush with the
+   hairline and [ this is ingaze ] above it */
+.hero-bottom > .group:last-child{grid-column:10/13;justify-content:space-between}
+.group{display:flex;gap:var(--group-gap);flex-wrap:wrap}
+.hero-bottom a:hover{text-decoration:underline;text-underline-offset:.3em}
+/* This hero frame is very pale; bone type disappears on it. Default is ink,
+   with a light wash instead of a dark scrim. Toggle in the preview bar. */
+body[data-heroink] .hero-in{color:var(--on-pale)}
+body[data-heroink] .hero-bg::after{
+ background:linear-gradient(to top,rgba(240,238,236,.26) 0%,rgba(240,238,236,0) 17%)}
+body[data-heroink] .hero-rule{border-top-color:rgba(26,26,24,.30)}
+
+/* ══ projects §2.3 ════════════════════════════════════════════════════ */
+.projects{overflow:hidden}
+/* same 12-col grid as .page, so column 8 is one continuous vertical line
+   from the hero sentence → [ projects ] → the first filmstrip thumbnail */
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gutter);
+ align-items:center;border-top:var(--hairline);
+ padding:var(--row-pad) var(--page-margin);
+ max-width:var(--page-max);margin-inline:auto}
+.row .t-row{grid-column:1/5}
+.row .tags{grid-column:5/8}
+.row:last-of-type{border-bottom:var(--hairline)}
+.row:hover .t-row{text-decoration:underline;text-underline-offset:.18em;
+ text-decoration-thickness:1px}
+/* Strip spans cols 8→12 (width S = 5c + 4g). Thumb width 0.4S − 0.6g makes the
+   pitch exactly 2c + 2g — two page columns — so thumb 2 starts on column 10 and
+   thumb 3 on column 12, overflowing by exactly one column to make the bleed. */
+.strip{grid-column:8/13;display:flex;gap:var(--gutter)}
+.strip img{flex:none;width:calc(40% - 0.6 * var(--gutter));
+ height:auto;aspect-ratio:3/2;object-fit:cover;
+ /* desktop reads --focus-dt first: the 3:2 box and the mobile 21:9 band
+    crop very differently, so a file that needs eyes near the FAR edge of
+    its own frame on mobile can need a different vertical bias here to
+    line its eyes up with the other tiles in the row. Falls back to
+    --focus so every other thumbnail (which only sets one value) is
+    unaffected. */
+ object-position:var(--focus-dt,var(--focus,center))}
+/* some row thumbnails need a different crop per breakpoint — the desktop
+   3:2 tile and the mobile 21:9 band crop very differently, so a source
+   photo that reads well cropped tight on desktop can need a much wider,
+   less zoomed framing to avoid looking blown-up in the short mobile band.
+   Two files, one hidden per side. */
+.mob-only{display:none}
+
+/* ══ working together §2.4 ════════════════════════════════════════════ */
+.field{display:flex;flex-direction:column;gap:var(--s-3)}
+.field input,.field textarea{background:none;border:0;border-bottom:1px solid var(--rule);
+ padding:.55rem 0;font:400 15px/1.4 var(--font-sans);color:var(--ink);width:100%;resize:none}
+.field input:focus,.field textarea:focus{outline:0;border-bottom-color:var(--ink)}
+.send{background:none;border:0;padding:0;cursor:pointer;color:var(--ink);
+ text-decoration:underline;text-underline-offset:.3em;text-decoration-thickness:1px}
+.pending{border:1px dashed var(--rule);padding:var(--s-5);color:var(--muted)}
+
+/* ══ footer §2.5 ══════════════════════════════════════════════════════ */
+.foot{padding:var(--s-8) 0 var(--s-9)}
+.foot a:hover{text-decoration:underline;text-underline-offset:.3em}
+.col{display:flex;flex-direction:column;gap:.55rem}
+.signup{display:flex;gap:var(--s-4);align-items:flex-end;max-width:24rem;margin-top:var(--s-4)}
+.signup input{flex:1;background:none;border:0;border-bottom:1px solid var(--rule);
+ padding:.5rem 0;font:400 14px/1.2 var(--font-sans);color:var(--ink)}
+.signup input:focus{outline:0;border-bottom-color:var(--ink)}
+
+/* ══ project page §3 ══════════════════════════════════════════════════ */
+.p-hero{position:relative;overflow:hidden}
+.ig-mobile{display:none}
+/* the project hero is a band, not a near-full screen — mirrors the homepage
+   hero's move from a full viewport to ~half of one, so the meta and the
+   opening statement are visible without scrolling. */
+.p-hero .shot{width:100vw;margin-left:calc(50% - 50vw);height:min(58vh,760px);object-fit:cover;
+ display:block}
+.p-hero::after{content:'';position:absolute;inset:auto 0 0 0;height:42%;pointer-events:none;
+ background:linear-gradient(to top,rgba(23,23,21,.78),transparent)}
+/* wordmark and [ get in touch ] sit ON the image, not in a bar above it */
+.p-hero::before{content:'';position:absolute;inset:0 0 auto 0;height:24%;pointer-events:none;
+ background:linear-gradient(to bottom,rgba(23,23,21,.60),transparent);z-index:2}
+/* pinned to the viewport rather than scrolling away with the hero, so the
+   logo and [ get in touch ] stay reachable anywhere on a project page —
+   pinned so it stays reachable at any scroll depth on a project page
+   chrome. Its own gradient backing (::before, below) only covers the hero
+   itself; a fixed bar needs contrast at every scroll position, including
+   mid-scroll past the raw (un-gradiented) photo, so it gets a small
+   independent backing rather than relying on the hero's. */
+.p-top{position:fixed;top:var(--s-6);left:var(--page-margin);right:var(--page-margin);
+ z-index:50;display:flex;justify-content:space-between;align-items:flex-start;
+ gap:var(--s-6);color:var(--on-image);
+ padding:var(--s-3) var(--s-4);margin:calc(-1 * var(--s-3)) calc(-1 * var(--s-4));
+ border-radius:var(--s-2);
+ background:linear-gradient(to bottom,rgba(23,23,21,.55),rgba(23,23,21,0) 140%)}
+.p-top a[href]{text-decoration:none}
+.p-top .t-small{text-decoration:underline;text-underline-offset:.3em;
+ text-decoration-thickness:1px}
+.p-titlewrap{position:absolute;left:var(--page-margin);right:var(--page-margin);
+ bottom:var(--s-7);z-index:2}
+.p-titlewrap .t-project{color:var(--on-image)}
+/* The hero band crops a portrait frame hard. The inset shows the SAME frame
+   whole, at its own aspect ratio, straddling the hero's lower edge — so the
+   close crop and the full photograph read together. */
+/* translateY(50%) off bottom:0 puts exactly half the inset on the photograph
+   and half on the charcoal below — independent of its rendered height. */
+.p-inset{position:absolute;right:calc(var(--page-margin) + 4vw);bottom:0;
+ transform:translateY(50%);
+ width:clamp(120px,16vw,240px);height:auto;z-index:4;display:block;
+ background:var(--img-rest)}
+/* display:block above beats the browser's [hidden] rule, so state it here:
+   without this the inset shows on every project, not just the one opting in */
+.p-inset[hidden]{display:none}
+/* no extra space below the hero: the inset hangs on the RIGHT and the meta
+   line sits on the LEFT, so they never actually collide */
+.p-hero.has-inset{margin-bottom:0}
+.p-meta{margin:var(--s-4) 0 0}
+/* the medium words are jumps into the page; underline rather than brackets,
+   which would crowd a meta line */
+.p-meta a{text-decoration:underline;text-underline-offset:.35em;
+ text-decoration-thickness:1px;text-decoration-color:var(--rule)}
+.p-meta a:hover{text-decoration-color:currentColor}
+
+/* scattered gallery — negative space is the point (§3.3) */
+.gal{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gutter)}
+.gal figure{margin:0}
+/* dense mode: for projects with many frames, a tight uniform grid — same
+   number of pictures in a fraction of the scrolling */
+.gal.dense{grid-template-columns:repeat(4,1fr);gap:var(--s-4);align-items:start}
+.gal.dense > *{grid-column:auto!important;margin-top:0!important;width:auto!important;
+ margin-left:0!important}
+.gal.dense .sec-head{grid-column:1/-1!important;margin-top:var(--space-section)!important}
+/* sub-project divider — a project can hold several named bodies of work.
+   Deliberately NOT the homepage row: no tags, no filmstrip, so it reads as a
+   chapter inside a project rather than a link out to one. */
+.sec-head{grid-column:1/13;margin-top:var(--space-section);
+ border-top:var(--hairline);padding-top:var(--s-5)}
+.sec-head p{margin:0}
+.sec-head .lead{max-width:var(--measure)}
+.sec-head .credit{margin-top:var(--s-3)}
+.sec-head + figure,.sec-head + div{margin-top:var(--s-8)!important}
+.gal figcaption{margin-top:var(--s-3)}
+/* Every slot renders its frame at its own aspect ratio — nothing is cropped.
+   Spans stay 4–5 columns so a 2:3 frame sits at a readable height, and the
+   left offsets vary so the column never forms a straight edge. */
+/* Exhibit scale: 3-column portraits (~312×468 at desktop) and 5-column
+   landscapes (~536×357). Narrow enough that two frames share a row, which is
+   what actually shortens the page — a taller image just scrolls longer.
+   Margins are multiples of --space-image, not --space-section. */
+.gal .g1{grid-column:2/5;margin-top:var(--space-image)}
+.gal .g2{grid-column:7/10;margin-top:calc(var(--space-image) * 1.5)}
+.gal .g3{grid-column:4/7;margin-top:var(--space-image)}
+.gal .g4{grid-column:9/12;margin-top:calc(var(--space-image) * 0.6)}
+.gal .g5{grid-column:1/4;margin-top:calc(var(--space-image) * 1.2)}
+.gal .g6{grid-column:6/9;margin-top:var(--space-image)}
+/* landscape frames get a wider slot, still never full bleed */
+.gal .l1{grid-column:2/7;margin-top:var(--space-image)}
+.gal .l2{grid-column:7/12;margin-top:calc(var(--space-image) * 1.3)}
+/* an unusually narrow frame (taller than 2:1) gets a narrower slot so its
+   height still fits a screen — narrowing the slot, never cropping the frame */
+.gal .x1{grid-column:3/5;margin-top:var(--space-image)}
+.gal .x2{grid-column:8/10;margin-top:calc(var(--space-image) * 1.4)}
+/* Video slot takes its ratio from the project data — 9/16 for a vertical
+   film, 16/9 for a landscape one. Nothing is letterboxed or cropped. */
+.video{aspect-ratio:var(--video-ratio,16/9);background:var(--img-rest);
+ display:grid;place-items:center;border:var(--hairline);position:relative;
+ overflow:hidden}
+.video img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+/* facade: the embed only loads on click, so an untouched page costs nothing */
+.video button{position:absolute;inset:0;width:100%;background:rgba(23,23,21,.30);
+ border:0;cursor:pointer;color:var(--on-image);display:grid;place-items:center;
+ font:500 var(--t-small-size)/1 var(--font-sans);letter-spacing:var(--t-small-track);
+ text-transform:uppercase}
+.video button:hover{background:rgba(23,23,21,.14)}
+.pill{position:sticky;bottom:var(--pill-inset);margin:var(--space-section) auto var(--s-8);
+ width:max-content;display:flex;align-items:center;gap:var(--s-4);height:var(--pill-h);
+ padding:0 var(--s-5) 0 var(--s-2);background:var(--surface);border:var(--hairline);z-index:5}
+.pill img{height:calc(var(--pill-h) - 16px);width:calc(var(--pill-h) - 16px);object-fit:cover}
+
+/* ══ specimen ═════════════════════════════════════════════════════════ */
+.sw{height:6rem;border:1px solid var(--rule)}
+.srow{display:grid;grid-template-columns:9rem 1fr;gap:var(--s-5);align-items:baseline;
+ padding:var(--s-4) 0;border-top:1px solid var(--rule)}
+
+/* 769–1359px: columns 10–12 are too narrow to hold both links side by side —
+   below 1360px they wrap, and a wrapped flex line falls back to flex-start,
+   which broke the right edge again. Stack them right-aligned instead: the
+   flush right edge holds, and [ projects ] gives up the column-10 start,
+   since both cannot hold in three columns. */
+@media (min-width:769px) and (max-width:1359px){
+ .hero-bottom > .group:last-child{flex-direction:column;align-items:flex-end;
+  gap:var(--s-2)}
+}
+
+@media (max-width:768px){
+ .hero-low,.hero-bottom{display:flex;flex-direction:column;
+  align-items:flex-start;gap:var(--s-4)}
+ .hero-low > div,.hero-low > .t-hero-sub,
+ .hero-bottom > .group{grid-column:auto}
+
+ /* 1 · byline sits inline after "practice" again. Inline means it shares the
+    headline's baseline automatically, so it can never land in the descender
+    of the "p"; nowrap keeps the name intact if it ever drops to its own line. */
+ .byline{display:inline;color:inherit;margin-left:.5rem;
+  line-height:1;white-space:nowrap}
+
+ /* 2 · two columns: the four left-hand items stacked, [ instagram ] alone on
+    the right, vertically centred against them. */
+ /* Row 1 spans BOTH columns so "stories, stills and moving frames" (254px
+    natural) fits on one line. Row 2 is tulum + instagram, side by side.
+    row-gap 4px puts the stack on ~19px pitch — the same rhythm as the
+    descriptor paragraph's lines above it. */
+ /* one column, one tight block: label, then the two internal links stacked at
+    the descriptor paragraph's pitch, then [ instagram ] set apart below. */
+ .hero-bottom{display:flex;flex-direction:column;align-items:flex-start;
+  row-gap:var(--s-2)}
+ /* the 23ch measure is a desktop reading width; on a phone it squeezes a
+    335px column into 212px and forces a third line. Let it run full width. */
+ .t-hero-sub{max-width:none}
+ /* working together on mobile: the heading drops to the row-title size so it
+    matches 'personal brand', and the copy steps down under it. Three sizes
+    on the page total: 16 / 13 / 10. */
+ #working .t-statement{font-size:var(--t-hero-sub-size);
+  line-height:var(--t-hero-sub-lh);letter-spacing:var(--t-hero-sub-track)}
+ #working .t-lede{font-size:0.8125rem;line-height:1.55}
+ #working .t-body{font-size:0.8125rem;line-height:1.6}
+ /* 64px under the heading was sized for a 36px statement. With the heading
+    at 16px that gap read as three times its own height and left the title
+    stranded, so it steps down with the type. */
+ .after-statement{margin-top:var(--s-5)}
+ /* the closing call to action carries the same weight as the hero headline
+    on mobile: it is the one thing on the page asking to be acted on. */
+ .t-close{font-size:var(--t-hero-size);line-height:var(--t-hero-lh);
+  letter-spacing:var(--t-hero-track);max-width:none}
+ .hero-bottom .group{display:contents}
+ /* the three links share one row instead of stacking. The hero content is
+    bottom-anchored, so collapsing three lines into one pushes the headline,
+    the rule and the sentence down the page by the same amount — off the
+    figure's head, where black type had nothing to sit against. */
+ .hero-in{padding-bottom:var(--s-5)}
+ /* the hero's supporting line, the two bracket links and instagram all sit
+    at the same size as the row tags and 'view', so the page has exactly two
+    small sizes on mobile, not three. */
+ .hero-bottom,.hero-bottom a,.hero-bottom span{
+  font-size:var(--t-micro-size);letter-spacing:var(--t-micro-track);
+  line-height:var(--t-micro-lh)}
+ .hero-bottom .group:first-child > :nth-child(1){grid-area:1/1}  /* stories   */
+ /* tulum based is dropped from the hero on mobile — it still appears in the
+    footer, so the location is not lost from the page */
+ .hero-bottom .group:first-child > :nth-child(2){display:none}
+ /* one blank line between groups: the pair sits on a 23px pitch, each group
+    break is 47px — twice the pitch */
+ .hero-bottom .group:last-child  > :nth-child(1){grid-area:2/1;  /* projects  */
+  margin-top:var(--s-5)}
+ .hero-bottom .group:last-child  > :nth-child(2){grid-area:3/1}  /* working   */
+ .hero-bottom .group:first-child > :nth-child(3){grid-area:4/1;  /* instagram */
+  margin-top:var(--s-5);justify-self:end}
+ /* labels, not links: no bracket, no underline, no hover */
+ .hero-bottom span{padding:0}
+
+ /* 4 · tap targets. A 44px-tall box per link would force ≥29px of visual gap
+    between two 11.5px lines, which is the loose spacing Laura flagged. So the
+    LAYOUT box is tight (text + 8px) and the 44px HIT area is an overlay that
+    doesn't affect layout. Consequence: the hit zones of [ projects ] and
+    [ working together ] overlap by ~13px; both are internal anchors on the
+    same page, so a mis-tap is low cost. */
+ .hero-bottom a{position:relative;display:inline-flex;align-items:center;
+  min-height:0;padding:0}
+ /* stacked again at a 23px pitch, so the two internal links' hit areas tile
+    exactly (23px each, no overlap) rather than reaching 44px. [ instagram ]
+    is set apart below, so it keeps the full 44px — it is the only link that
+    leaves the site. */
+ .hero-bottom a::after{content:'';position:absolute;left:0;right:0;
+  top:-4px;bottom:-4px}
+ .hero-bottom .group:last-child > :nth-child(1)::after{top:-12px}  /* into gap */
+ .hero-bottom .group:last-child > :nth-child(2)::after{bottom:-12px}
+ .hero-bottom .group:first-child > a::after{top:50%;bottom:auto;height:44px;
+  transform:translateY(-50%)}
+ /* the three links share one row. The stacked layout above assigns each of
+    them a grid-area and a top margin; both have to be cleared here, after
+    those rules, or [ projects ] keeps its 12px offset. */
+ .hero-bottom .group.links{display:flex;flex-direction:row;flex-wrap:nowrap;
+  align-items:center;justify-content:space-between;
+  column-gap:var(--s-3);width:100%;margin-top:var(--s-4)}
+ /* the legacy selector scores (0,4,0) — two classes plus two pseudo-classes.
+    :nth-child(n) here lifts this to (0,4,1) so it actually wins. */
+ .hero-bottom .group.links > a:nth-child(n){grid-area:auto;margin-top:0;
+  justify-self:auto;white-space:nowrap}
+ .hero-bottom .group.links > a::after{top:-11px;bottom:-11px}
+ .hero-top a[aria-expanded]{display:inline-flex;align-items:center;min-height:44px}
+ /* the logo is a link too (returns to top) — same 44px rule, mask stays 11px
+    and centres inside the taller box, so nothing moves visually */
+ .hero-top .logo{min-height:44px;min-width:44px;
+  background:none;display:inline-flex;align-items:center}
+ .hero-top .logo::before{content:'';display:block;
+  height:var(--wordmark-h);width:calc(var(--wordmark-h) * var(--wordmark-ratio));
+  background:currentColor;
+  -webkit-mask:url(../public/images/logo.png) no-repeat left center/contain;
+  mask:url(../public/images/logo.png) no-repeat left center/contain}
+ /* title and tag share one baseline: title left and larger, tag right and
+    smaller, so the size ratio matches desktop (≈2.1) instead of collapsing */
+ /* mobile row: title with a tappable 'view' opposite it, tags on their own
+    line beneath, then a swipeable filmstrip. */
+ .row{grid-template-columns:minmax(0,1fr) auto;align-items:baseline;
+  column-gap:var(--s-4);row-gap:var(--s-3)}
+ .row .t-row{grid-column:1}   /* size stays var(--t-hero-sub-size) — same as 'exploring' */
+ .row .tags{grid-column:1;justify-self:start;white-space:nowrap;
+  font-size:var(--t-micro-size);letter-spacing:var(--t-micro-track);
+  margin-top:calc(-1 * var(--s-2))}
+ .row::after{content:'view';grid-column:2;grid-row:1;justify-self:end;
+  align-self:baseline;font-family:var(--font-switzer),system-ui,sans-serif;
+  font-size:var(--t-micro-size);letter-spacing:var(--t-micro-track);
+  text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--rule);padding-bottom:.18em}
+ /* mobile: all three frames, edge to edge, swiped horizontally with snap */
+ .strip{grid-column:1/-1;display:flex;width:100vw;
+  margin-left:calc(-1 * var(--page-margin));margin-right:0;
+  margin-top:calc(-1 * var(--s-2));
+  gap:var(--s-3);padding:0 var(--page-margin);
+  overflow-x:auto;overscroll-behavior-x:contain;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+ .strip::-webkit-scrollbar{display:none}
+ .strip img{flex:none;width:calc(100vw - (2 * var(--page-margin)));
+  aspect-ratio:21/9;object-fit:cover;object-position:var(--focus,center);
+  scroll-snap-align:center}
+ .dt-only{display:none}
+ .mob-only{display:block}
+ .grid>*{grid-column:1/13!important}
+ .gal>*{grid-column:1/13!important;margin-top:var(--space-image)!important}
+ .gal .gfull{width:100vw}
+ .gfull{width:100vw}
+ /* title stays ON the image on mobile too; the bottom scrim carries it */
+ .p-titlewrap{bottom:var(--s-5)}
+ .p-inset{display:none}
+ .p-hero.has-inset{margin-bottom:0}
+ /* a landscape hero in a 92vh band shows only ~1/3 of its width. A 4:5 box
+    keeps the hero substantial while showing about half the frame. */
+ .p-hero .shot{height:auto;aspect-ratio:4/5}
+ /* instagram joins the link stack on mobile; the tagline takes the right
+    side opposite it, so the bottom of the hero reads as two columns. */
+ .hero-bottom .group:first-child a[href*='instagram']{display:none}
+ .ig-mobile{display:inline}
+ /* no room for two columns on a phone: the portrait sits above the text */
+ /* on a phone the headline and the sentence both stack, so the band needs
+    more room than 58vh to avoid feeling cramped */
+ /* flush right only belongs in the two-column hero. On a phone the sentence
+    runs the full width under the headline, so it reads left. */
+ .hero-low > .t-hero-sub{text-align:left}
+ /* full screen on mobile — showing the first project row below the fold
+    read as too busy. Real mobile Safari's address bar eats into the
+    viewport that plain vh is calculated against, so vh alone reads taller
+    than what's actually visible on a phone; dvh (dynamic viewport height)
+    tracks the address-bar-adjusted visible area and is what actually
+    matches what Laura sees on her device. */
+ .hero{min-height:100vh;min-height:100dvh}
+ .rev-spread{grid-template-columns:1fr;max-width:none}
+ .rev-portrait,.rev-practice,.rev-laura{grid-column:1;grid-row:auto}
+ .rev-practice{columns:1}
+ .rev-portrait{aspect-ratio:933/1400}
+ .rev-portrait{width:min(15rem,60%)}
+ .rev-laura-body{grid-template-columns:1fr}
+ .rev-portrait{width:min(15rem,60%)}
+ .srow{grid-template-columns:1fr}
+}

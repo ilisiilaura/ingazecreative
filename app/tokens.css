@@ -1,0 +1,157 @@
+/* ingaze — design tokens
+   Source of truth. No component defines a colour, size, or duration directly.
+
+   Fonts load in app/layout.tsx via next/font/local, which exposes
+   --font-switzer and --font-sentient. This file only composes them.
+
+   TYPE CASE RULE (spec §2.1, applies site-wide):
+     small text  → tracked-out UPPERCASE   (nav, eyebrow, meta, tags, captions)
+     large text  → lowercase               (headlines, statements, sentences)
+   The two exceptions are noted at --t-wordmark below. */
+
+:root {
+  /* ── colour ─────────────────────────────────────────────────────────
+     No accent colour. All warmth comes from the photographs, which now
+     sit on charcoal rather than bone. */
+  --ground:   #171715;   /* dark charcoal — the site's ground          */
+  --surface:  #1F1F1C;   /* raised areas, form fields                   */
+  --ink:      #E8E8E4;   /* text — bone on charcoal                     */
+  --muted:    #8A8A82;   /* meta, captions (5.1:1 on ground)            */
+  --rule:     #2E2E2A;   /* hairlines                                   */
+
+  /* derived — states and scaffolding only, not new colours */
+  --focus-ring: #E8E8E4;
+  --img-rest:   #222220;   /* box behind an image while it decodes       */
+  --on-image:   #F4F4F1;   /* text laid over photography                 */
+  --on-pale:    #1A1A18;   /* text over a very pale frame (washed film)  */
+  --accent-gold: #6B4A10;   /* [ this is ingaze ] over the pale/warm hero — a true
+                              bright yellow measures under 2:1 here and reads as
+                              nearly invisible; this is the darkest, most amber
+                              step in the yellow family that clears 4.5:1 (5.0:1
+                              measured against the pale wall behind the button). */
+  --scrim:      rgba(23,23,21,.55); /* under text-on-image only          */
+
+  /* ── typeface ─────────────────────────────────────────────────────── */
+  --font-sans:  var(--font-switzer),  ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-sentient), ui-serif, Georgia, serif;
+
+  /* ══ SMALL TEXT — Switzer, tracked uppercase ════════════════════════ */
+
+  /* micro — tags, captions, year · medium, credits */
+  --t-micro-size:   0.625rem;      /* 10px   */
+  --t-micro-lh:     1.2;
+  --t-micro-track:  0.14em;
+  --t-micro-weight: 500;
+
+  /* small — nav, eyebrow, hero bottom row, form labels, footer */
+  --t-small-size:   0.71875rem;    /* 11.5px */
+  --t-small-lh:     1.3;
+  --t-small-track:  0.12em;
+  --t-small-weight: 500;
+
+  /* wordmark — the two case exceptions. "ingaze" is lowercase always
+     (brand rule), and [ this is ingaze ] stays lowercase because it
+     contains the wordmark. Everything else small is uppercase. */
+  --t-wordmark-size:   0.8125rem;  /* 13px   */
+  --t-wordmark-weight: 500;
+  --t-wordmark-track:  0.02em;
+  --wordmark-h:        11px;    /* logo cap height ≈ the 13px text it replaces */
+  --wordmark-ratio:    5.257;   /* 1167 × 222 */
+
+  /* ══ LARGE TEXT — lowercase ═════════════════════════════════════════ */
+
+  /* hero headline — Switzer. Home's register is bold and sans-led. */
+  --t-hero-size:  clamp(2.75rem, 8vw, 7rem);
+  --t-hero-lh:    0.95;
+  --t-hero-track: -0.03em;
+
+  /* hero supporting sentence — sits beside the headline, not beneath */
+  --t-hero-sub-size: clamp(1rem, 1.7vw, 1.625rem);
+  --t-hero-sub-lh:   1.3;
+  --t-hero-sub-track:-0.01em;
+
+  /* project row title — the six-row list */
+  --t-row-size:  var(--t-hero-sub-size);  /* identical to the hero sentence */
+  --t-row-lh:    var(--t-hero-sub-lh);
+  --t-row-track: var(--t-hero-sub-track);
+
+  /* statement — working together opening, and the close line */
+  --t-statement-size:  clamp(1.75rem, 3.5vw, 3rem);
+  --t-statement-lh:    1.15;
+  --t-statement-track: -0.02em;
+
+  /* close line — set to match the hero supporting sentence, per Laura */
+  --t-close-size:  var(--t-hero-sub-size);
+  --t-close-lh:    var(--t-hero-sub-lh);
+  --t-close-track: var(--t-hero-sub-track);
+
+  /* project page hero title — Sentient. This page is serif-led and quiet,
+     deliberately a different register from Home. */
+  --t-project-size:  clamp(2.5rem, 7vw, 6rem);
+  --t-project-lh:    1.0;
+  --t-project-track: -0.015em;
+
+  /* ══ PROSE — Sentient, extra leading ════════════════════════════════ */
+  --t-lede-size: clamp(1.125rem, 1.4vw, 1.375rem);
+  --t-lede-lh:   1.55;
+  --t-body-size: 1.0625rem;        /* 17px */
+  --t-body-lh:   1.7;
+
+  --measure:      62ch;            /* verified at 62 chars/line */
+  --measure-wide: 72ch;
+
+  /* ── space ──────────────────────────────────────────────────────────
+     8px base at the small end; fluid at the large end so empty area
+     grows with the viewport and the scale contrast holds. */
+  --s-1: 0.25rem;  --s-2: 0.5rem;   --s-3: 0.75rem;  --s-4: 1rem;
+  --s-5: 1.5rem;   --s-6: 2rem;     --s-7: 3rem;     --s-8: 4rem;
+  --s-9: 6rem;     --s-10: 8rem;    --s-11: 12rem;   --s-12: 16rem;
+
+  --space-section: clamp(4rem, 8vw, 8.5rem);  /* between page movements  */
+  --space-block:   clamp(1.5rem, 2.5vw, 2.5rem); /* between blocks inside
+                     one section — subsections must not read as sections */
+  --space-image:   clamp(3rem, 6vw, 8rem);    /* between gallery images  */
+  --group-gap:     2.25rem;                   /* 36px — within hero rows */
+
+  /* ── grid ─────────────────────────────────────────────────────────── */
+  --page-margin: clamp(1.25rem, 4vw, 4rem);
+  --page-max:    105rem;    /* 1680px */
+  --cols:        12;
+  --gutter:      clamp(1rem, 1.75vw, 1.5rem);
+
+  --hairline: 1px solid var(--rule);
+
+  /* ── project row (§2.3) ─────────────────────────────────────────────
+     Rows stay slim: the filmstrip sets the height, not the images. */
+  --row-pad:       clamp(1.5rem, 2.5vw, 2.25rem);
+  --rev-pad:       clamp(1.25rem, 2vw, 2.25rem);  /* even border inside the reveal block */
+  --strip-h:       clamp(3.5rem, 7vw, 6.5rem);
+  --strip-gap:     var(--s-2);
+  --strip-bleed:   calc(var(--page-margin) * -1);  /* runs off-screen right */
+
+  /* ── next-project pill (§3.4) ───────────────────────────────────── */
+  --pill-h:     clamp(3rem, 4vw, 3.75rem);
+  --pill-inset: var(--s-6);
+
+  /* ── motion ─────────────────────────────────────────────────────────
+     The load sequence (§2.2) is the ONLY motion on the site. Six
+     secondary frames land stacked and offset, then clear — back to the
+     original pace; a faster version read as rushed/annoying to Laura.
+     Budget: 6×70 + 220 + 150 + 350 ≈ 1140ms total. */
+  --ease-land:      cubic-bezier(0.16, 1, 0.3, 1);
+  --stack-interval: 70ms;    /* between each image landing   */
+  --stack-land:     220ms;   /* one image's drop-in          */
+  --stack-hold:     150ms;   /* full stack sits              */
+  --stack-clear:    350ms;   /* stack clears, hero settles   */
+  --stack-shift:    24px;    /* land travel — transform only */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --stack-interval: 0ms;
+    --stack-land:     1ms;
+    --stack-hold:     0ms;
+    --stack-clear:    160ms;   /* plain fade, no stacking */
+    --stack-shift:    0px;
+  }
+}

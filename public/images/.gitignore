@@ -1,0 +1,27 @@
+# This folder also serves design/preview.html, which references the full
+# raw photo library during design review. The shipped site only needs the
+# already-optimized /web derivatives per project (see ../README.md) — so
+# everything else here stays on disk for Laura's review workflow but is
+# excluded from the deployed repo to keep it small.
+
+# raw source libraries, not the optimized /web exports
+personal-brand/portraits/
+commercial/selected/
+artisan-series/selected/
+artisan-series/*.jpg
+artisan-series/captions.txt
+retreat/
+the-feminine/
+cyanotype/
+selected analog/
+photo laura/
+
+# analog/ is a raw dump of ~30 photos; only the loader's 6 stills are used
+analog/*
+!analog/a01-sm.jpg
+!analog/a01-lg.jpg
+!analog/a02-sm.jpg
+!analog/a03-sm.jpg
+!analog/a04-sm.jpg
+!analog/a12-sm.jpg
+!analog/al011-sm.jpg
